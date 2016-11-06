@@ -1,10 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from .base import FunctionalTest
 import sys
 
 
-class TodoTest(StaticLiveServerTestCase):
+class NewVisitorTest(FunctionalTest):
 
     @classmethod
     def setUpClass(cls):
@@ -12,14 +12,13 @@ class TodoTest(StaticLiveServerTestCase):
             if 'liveserver' in arg:
                 cls.server_url = 'http://' + arg.split('=')[1]
                 return
-        super(TodoTest, cls).setUpClass()
+        super(NewVisitorTest, cls).setUpClass()
         cls.server_url = cls.live_server_url
 
     # @classmethod
     # def tearDownClass(cls):
     #     if cls.server_url == cls.live_server_url:
-    #         super(TodoTest, cls).tearDownClass()
-
+    #         super(NewVisitorTest, cls).tearDownClass()
 
     
     def setUp(self):
@@ -29,17 +28,9 @@ class TodoTest(StaticLiveServerTestCase):
     def tearDown(self):
         self.browser.refresh()
         self.browser.quit()
-        
 
-    def check_for_row_in_list_table(self, row_text):
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn(row_text, [row.text for row in rows])
-    
-        
-	
     def test_can_start_a_list_and_retrieve_it_later(self):
-    	self.browser.get(self.server_url)
+        self.browser.get(self.server_url)
 
         #she notices the page title and header mentions to-do lists
         self.assertIn('To-do', self.browser.title)
@@ -75,8 +66,8 @@ class TodoTest(StaticLiveServerTestCase):
 
         # Now a new user, Francis, comes along to the site.
 
-    ## We use a new browser session to make sure that no information
-    ## of Edith's is coming through from cookies etc
+        ## We use a new browser session to make sure that no information
+        ## of Edith's is coming through from cookies etc
 
         self.browser.quit()
 
@@ -104,52 +95,3 @@ class TodoTest(StaticLiveServerTestCase):
         page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Buy Goats', page_text)
         self.assertIn('Buy milk', page_text)
-
-        # Satisfied, they both go back to sleep
-
-
-        # table = self.browser.find_element_by_id('id_list_table')
-        # rows = table.find_elements_by_tag_name('tr')
-        # self.assertIn('1: Buy Os', [row.text for row in rows])
-        # self.assertIn('2: Buy Goats', [row.text for row in rows])
-
-        # self.fail('Finish the test!') 
-class NewVisitorTest(StaticLiveServerTestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        for arg in sys.argv:
-            if 'liveserver' in arg:
-                cls.server_url = 'http://' + arg.split('=')[1]
-                return
-        super(NewVisitorTest, cls).setUpClass()
-        cls.server_url = cls.live_server_url
-
-    # @classmethod
-    # def tearDownClass(cls):
-    #     if cls.server_url == cls.live_server_url:
-    #         super(NewVisitorTest, cls).tearDownClass()
-
-    
-    def setUp(self):
-        self.browser = webdriver.Chrome('C:\Program Files (x86)\Google\Chrome\Application\chromedriver')
-        self.browser.implicitly_wait(3)
-
-    def tearDown(self):
-        self.browser.refresh()
-        self.browser.quit()
-        
-
-    def test_layout_and_styling(self):
-        #User goes to homepage
-        self.browser.get(self.server_url)
-        self.browser.set_window_size(1024, 768)
-
-        #she notices the input box is nicely centered
-
-        inputbox = self.browser.find_element_by_id('id_new_item')
-        # inputbox.send_keys('testing\n')
-        self.assertAlmostEqual(
-            inputbox.location['x'] + inputbox.size['width'] / 2, 
-            510,
-            delta = 5)
