@@ -1,11 +1,8 @@
 {% extends 'base.html' %}
 
-{%block header_text %}Start a new To-do list
+{%block header_text %} Start a new To-do list {% endblock %}
 
-{% endblock %}
-
-{% block form_action %}/lists/new
-
+{% block form_action %}{% url 'new_list' %}
 {% endblock %}
 
 
