@@ -1,0 +1,74 @@
+warning: LF will be replaced by CRLF in lists/tests/test_views.py.
+The file will have its original line endings in your working directory.
+[1mdiff --git a/lists/templates/base.html b/lists/templates/base.html[m
+[1mindex 77a0c2c..f31078f 100644[m
+[1m--- a/lists/templates/base.html[m
+[1m+++ b/lists/templates/base.html[m
+[36m@@ -20,10 +20,7 @@[m
+             <div class="text-center">[m
+                 <h1>{% block header_text %}{% endblock %}</h1>[m
+                 <form method="POST" action="{% block form_action %}{% endblock %}">[m
+[31m-                    <input name="item_text" id="id_new_item"[m
+[31m-                    	   class = "form-control input-lg"[m
+[31m-                           placeholder="Enter a to-do item"[m
+[31m-                    />[m
+[32m+[m[32m                    {{ form.text }}[m
+                     {% csrf_token %}[m
+                     {% if error %}[m
+                         <div class="form-group has-error">[m
+[1mdiff --git a/lists/tests/test_views.py b/lists/tests/test_views.py[m
+[1mindex 51315a3..4a73543 100644[m
+[1m--- a/lists/tests/test_views.py[m
+[1m+++ b/lists/tests/test_views.py[m
+[36m@@ -4,23 +4,20 @@[m [mfrom django.http import HttpRequest[m
+ from lists.views import home_page[m
+ from django.template.loader import render_to_string[m
+ from lists.models import Item,List[m
+[32m+[m[32mfrom lists.forms import ItemForm[m
+ [m
+ [m
+ class HomePageTest(TestCase):[m
+ [m
+[32m+[m	[32mmaxDiff = None[m
+ [m
+[31m-	def test_root_url_resolves_to_homepage_view(self):[m
+[31m-		found = resolve('/')[m
+[31m-		self.assertEqual(found.func, home_page)[m
+[31m-[m
+[31m-	def test_homepage_returns_correct_html(self):[m
+[31m-		request = HttpRequest()[m
+[31m-[m
+[31m-		response = home_page(request)[m
+[32m+[m	[32mdef test_homepage_renders_home_template(self):[m
+[32m+[m		[32mresponse = self.client.get('/')[m
+[32m+[m		[32mself.assertTemplateUsed(response, 'home.html')[m
+ [m
+[31m-		expected_html = render_to_string('home.html', request = request)[m
+[31m-		# print expected_html[m
+[31m-		self.assertEqual(response.content.decode(), expected_html)[m
+[32m+[m	[32mdef test_homepage_uses_item_form(self):[m
+[32m+[m		[32mresponse = self.client.get('/')[m
+[32m+[m		[32mself.assertIsInstance(response.context['form'], ItemForm)[m
+ [m
+ 		[m
+ [m
+[1mdiff --git a/lists/views.py b/lists/views.py[m
+[1mindex 4dcad73..178828e 100644[m
+[1m--- a/lists/views.py[m
+[1m+++ b/lists/views.py[m
+[36m@@ -1,11 +1,11 @@[m
+ from django.shortcuts import render,redirect[m
+ from .models import Item, List[m
+ from django.core.exceptions import ValidationError[m
+[31m-[m
+[32m+[m[32mfrom lists.forms import ItemForm[m
+ [m
+ def home_page(request):[m
+ [m
+[31m-	return render(request, 'home.html')[m
+[32m+[m	[32mreturn render(request, 'home.html', {'form': ItemForm()})[m
+ [m
+ def view_list(request, list_id):[m
+ 	list_ = List.objects.get(id = list_id)[m
+warning: LF will be replaced by CRLF in lists/views.py.
+The file will have its original line endings in your working directory.
