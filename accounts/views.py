@@ -5,10 +5,11 @@ from django.http import HttpResponse
 from accounts.models import Token
 from django.core.urlresolvers import reverse
 from django.contrib import auth, messages
+import uuid
 
 def send_login_email(request):
-	email = request.POST['email']
-	token = Token.objects.create(email=email)
+	email = request.POST.get('email')
+	token = Token.objects.create(email = email)
 	url = request.build_absolute_uri(
 		reverse('login') + '?token={uid}'.format(uid=str(token.uid)))
 	message_body = "Use this link to login:\n\n{url}".format(url=url)
