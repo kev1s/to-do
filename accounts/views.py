@@ -18,7 +18,7 @@ def send_login_email(request):
 		'Your login link for To-do',
 		message_body,
 		'noreply@todo',
-		[email],)
+		[email])
 
 	messages.success(request, "Check your email, we have sent you a link you can use to login")
 	return redirect('/')
