@@ -15,7 +15,17 @@ class MyListsTest(FunctionalTest):
 		## to set a cookie we visit the domain, 404 pages load the quickest
 		self.browser.get(self.server_url + "/404_no_such_url/")
 		self.browser.add_cookie(dict(
-				name = setting.SESSION_COOKIE_NAME,
+				name = settings.SESSION_COOKIE_NAME,
 				value = session.session_key,
 				path = '/'
 				))
+
+	def test_logged_in_users_lists_are_saved_as_my_lists(self):
+		email = 'edith@example.com'
+		self.browser.get(self.server_url)
+		self.assert_logged_out(email)
+
+		#edith is a logged in user
+		self.create_pre_authenticated_session(email)
+		self.browser.get(self.server_url)
+		self.assert_logged_in(email)
